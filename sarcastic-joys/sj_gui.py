@@ -11,6 +11,18 @@ import threading
 from pathlib import Path
 from datetime import datetime
 
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from shared_ui.brand_theme import (
+    body_font,
+    build_brand_theme,
+    caption_font,
+    heading_font,
+    subheading_font,
+)
+
 try:
     import customtkinter as ctk
 except ImportError:
@@ -150,18 +162,10 @@ def save_output(text: str) -> Path:
 
 # ── GUI ───────────────────────────────────────────────────────────────────────
 
-# Warm editorial palette
-CREAM       = "#F5F0E8"
-CREAM_DARK  = "#EDE8DC"
-CHARCOAL    = "#2C2C2C"
-CHARCOAL_MID= "#444444"
-WARM_GRAY   = "#8A8378"
-RUST        = "#B85C38"
-RUST_HOVER  = "#A04F30"
-BORDER      = "#D4CEC4"
-WHITE       = "#FFFFFF"
+THEME = build_brand_theme("sarcastic_joys")
+COLORS = THEME["colors"]
 
-ctk.set_appearance_mode("light")
+ctk.set_appearance_mode(THEME["appearance_mode"])
 ctk.set_default_color_theme("blue")
 
 class SarcasticJoysApp(ctk.CTk):
@@ -171,7 +175,7 @@ class SarcasticJoysApp(ctk.CTk):
         self.title("Sarcastic Joys — Content Repurposing")
         self.geometry("1020x760")
         self.minsize(800, 600)
-        self.configure(fg_color=CREAM)
+        self.configure(fg_color=COLORS["surface"])
         self._build_ui()
         self._load_saved_key()
 
@@ -183,28 +187,28 @@ class SarcasticJoysApp(ctk.CTk):
         self.grid_rowconfigure(2, weight=1)
 
         # Header
-        hdr = ctk.CTkFrame(self, fg_color=CHARCOAL, corner_radius=0, height=64)
+        hdr = ctk.CTkFrame(self, fg_color=COLORS["primary"], corner_radius=0, height=64)
         hdr.grid(row=0, column=0, columnspan=2, sticky="ew")
         hdr.grid_propagate(False)
         ctk.CTkLabel(
             hdr, text="SARCASTIC JOYS",
-            font=ctk.CTkFont(family="Georgia", size=18, weight="bold"),
-            text_color=CREAM, fg_color="transparent",
+            font=heading_font(ctk, THEME),
+            text_color=COLORS["surface"], fg_color="transparent",
         ).place(relx=0.04, rely=0.5, anchor="w")
         ctk.CTkLabel(
             hdr, text="Content Repurposing",
-            font=ctk.CTkFont(family="Georgia", size=12),
-            text_color=WARM_GRAY, fg_color="transparent",
+            font=caption_font(ctk, THEME, size=12),
+            text_color=COLORS["text_muted"], fg_color="transparent",
         ).place(relx=0.96, rely=0.5, anchor="e")
 
         # Settings bar
-        bar = ctk.CTkFrame(self, fg_color=CREAM_DARK, corner_radius=0, height=52)
+        bar = ctk.CTkFrame(self, fg_color=COLORS["surface_alt"], corner_radius=0, height=52)
         bar.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 0))
         bar.grid_propagate(False)
         bar.grid_columnconfigure(4, weight=1)
 
-        ctk.CTkLabel(bar, text="Backend", font=ctk.CTkFont(size=11),
-                     text_color=WARM_GRAY, fg_color="transparent"
+        ctk.CTkLabel(bar, text="Backend", font=caption_font(ctk, THEME),
+                     text_color=COLORS["text_muted"], fg_color="transparent"
                      ).grid(row=0, column=0, padx=(16, 4), pady=14)
 
         self.backend_var = ctk.StringVar(value="Anthropic (Claude)")
@@ -213,75 +217,75 @@ class SarcasticJoysApp(ctk.CTk):
             values=list(BACKENDS.keys()),
             command=self._on_backend_change,
             width=180, height=30,
-            fg_color=WHITE, button_color=CHARCOAL_MID,
-            button_hover_color=CHARCOAL, text_color=CHARCOAL,
-            font=ctk.CTkFont(size=12),
+            fg_color=COLORS["surface_input"], button_color=COLORS["secondary"],
+            button_hover_color=COLORS["primary"], text_color=COLORS["primary"],
+            font=body_font(ctk, THEME, size=12),
         )
         self.backend_menu.grid(row=0, column=1, padx=(0, 16), pady=10)
 
-        ctk.CTkLabel(bar, text="Model", font=ctk.CTkFont(size=11),
-                     text_color=WARM_GRAY, fg_color="transparent"
+        ctk.CTkLabel(bar, text="Model", font=caption_font(ctk, THEME),
+                     text_color=COLORS["text_muted"], fg_color="transparent"
                      ).grid(row=0, column=2, padx=(0, 4), pady=14)
 
         self.model_var = ctk.StringVar(value="claude-opus-4-5")
         self.model_entry = ctk.CTkEntry(
             bar, textvariable=self.model_var, width=200, height=30,
-            fg_color=WHITE, border_color=BORDER, text_color=CHARCOAL,
-            font=ctk.CTkFont(size=12),
+            fg_color=COLORS["surface_input"], border_color=COLORS["border"], text_color=COLORS["primary"],
+            font=body_font(ctk, THEME, size=12),
         )
         self.model_entry.grid(row=0, column=3, padx=(0, 16), pady=10)
 
-        ctk.CTkLabel(bar, text="API Key", font=ctk.CTkFont(size=11),
-                     text_color=WARM_GRAY, fg_color="transparent"
+        ctk.CTkLabel(bar, text="API Key", font=caption_font(ctk, THEME),
+                     text_color=COLORS["text_muted"], fg_color="transparent"
                      ).grid(row=0, column=5, padx=(0, 4), pady=14)
 
         self.key_var = ctk.StringVar()
         self.key_entry = ctk.CTkEntry(
             bar, textvariable=self.key_var, width=220, height=30, show="•",
-            fg_color=WHITE, border_color=BORDER, text_color=CHARCOAL,
-            font=ctk.CTkFont(size=12), placeholder_text="paste key here",
+            fg_color=COLORS["surface_input"], border_color=COLORS["border"], text_color=COLORS["primary"],
+            font=body_font(ctk, THEME, size=12), placeholder_text="paste key here",
         )
         self.key_entry.grid(row=0, column=6, padx=(0, 8), pady=10)
 
         self.save_key_btn = ctk.CTkButton(
             bar, text="Save", width=56, height=30,
-            fg_color=CHARCOAL_MID, hover_color=CHARCOAL,
-            text_color=CREAM, font=ctk.CTkFont(size=11),
+            fg_color=COLORS["secondary"], hover_color=COLORS["primary"],
+            text_color=COLORS["surface"], font=caption_font(ctk, THEME),
             command=self._save_key,
         )
         self.save_key_btn.grid(row=0, column=7, padx=(0, 16), pady=10)
 
         # Left panel — input
-        left = ctk.CTkFrame(self, fg_color=CREAM, corner_radius=0)
+        left = ctk.CTkFrame(self, fg_color=COLORS["surface"], corner_radius=0)
         left.grid(row=2, column=0, sticky="nsew", padx=(16, 8), pady=16)
         left.grid_rowconfigure(1, weight=1)
         left.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             left, text="Essay",
-            font=ctk.CTkFont(family="Georgia", size=13, weight="bold"),
-            text_color=CHARCOAL, fg_color="transparent", anchor="w",
+            font=subheading_font(ctk, THEME),
+            text_color=COLORS["primary"], fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w", pady=(0, 6))
 
         self.input_box = ctk.CTkTextbox(
-            left, font=ctk.CTkFont(family="Georgia", size=13),
-            fg_color=WHITE, border_color=BORDER, border_width=1,
-            text_color=CHARCOAL, wrap="word",
-            scrollbar_button_color=BORDER,
-            scrollbar_button_hover_color=WARM_GRAY,
+            left, font=body_font(ctk, THEME),
+            fg_color=COLORS["surface_input"], border_color=COLORS["border"], border_width=1,
+            text_color=COLORS["primary"], wrap="word",
+            scrollbar_button_color=COLORS["border"],
+            scrollbar_button_hover_color=COLORS["text_muted"],
         )
         self.input_box.grid(row=1, column=0, sticky="nsew")
 
         self.run_btn = ctk.CTkButton(
             left, text="Repurpose →", height=40,
-            fg_color=RUST, hover_color=RUST_HOVER, text_color=WHITE,
-            font=ctk.CTkFont(family="Georgia", size=14, weight="bold"),
+            fg_color=COLORS["accent"], hover_color=COLORS["accent_hover"], text_color=COLORS["text_inverse"],
+            font=subheading_font(ctk, THEME, size=14),
             command=self._on_run, corner_radius=4,
         )
         self.run_btn.grid(row=2, column=0, sticky="ew", pady=(12, 0))
 
         # Right panel — output
-        right = ctk.CTkFrame(self, fg_color=CREAM, corner_radius=0)
+        right = ctk.CTkFrame(self, fg_color=COLORS["surface"], corner_radius=0)
         right.grid(row=2, column=1, sticky="nsew", padx=(8, 16), pady=16)
         right.grid_rowconfigure(1, weight=1)
         right.grid_columnconfigure(0, weight=1)
@@ -292,32 +296,32 @@ class SarcasticJoysApp(ctk.CTk):
 
         ctk.CTkLabel(
             out_hdr, text="Output",
-            font=ctk.CTkFont(family="Georgia", size=13, weight="bold"),
-            text_color=CHARCOAL, fg_color="transparent", anchor="w",
+            font=subheading_font(ctk, THEME),
+            text_color=COLORS["primary"], fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w")
 
         self.copy_btn = ctk.CTkButton(
             out_hdr, text="Copy all", width=80, height=28,
-            fg_color=CREAM_DARK, hover_color=BORDER,
-            text_color=CHARCOAL_MID, border_color=BORDER, border_width=1,
-            font=ctk.CTkFont(size=11), command=self._copy_output,
+            fg_color=COLORS["surface_alt"], hover_color=COLORS["hover_subtle"],
+            text_color=COLORS["secondary"], border_color=COLORS["border"], border_width=1,
+            font=caption_font(ctk, THEME), command=self._copy_output,
         )
         self.copy_btn.grid(row=0, column=1, padx=(8, 0))
 
         self.save_btn = ctk.CTkButton(
             out_hdr, text="Save .md", width=80, height=28,
-            fg_color=CREAM_DARK, hover_color=BORDER,
-            text_color=CHARCOAL_MID, border_color=BORDER, border_width=1,
-            font=ctk.CTkFont(size=11), command=self._save_output,
+            fg_color=COLORS["surface_alt"], hover_color=COLORS["hover_subtle"],
+            text_color=COLORS["secondary"], border_color=COLORS["border"], border_width=1,
+            font=caption_font(ctk, THEME), command=self._save_output,
         )
         self.save_btn.grid(row=0, column=2, padx=(6, 0))
 
         self.output_box = ctk.CTkTextbox(
-            right, font=ctk.CTkFont(family="Georgia", size=13),
-            fg_color=WHITE, border_color=BORDER, border_width=1,
-            text_color=CHARCOAL, wrap="word",
-            scrollbar_button_color=BORDER,
-            scrollbar_button_hover_color=WARM_GRAY,
+            right, font=body_font(ctk, THEME),
+            fg_color=COLORS["surface_input"], border_color=COLORS["border"], border_width=1,
+            text_color=COLORS["primary"], wrap="word",
+            scrollbar_button_color=COLORS["border"],
+            scrollbar_button_hover_color=COLORS["text_muted"],
             state="disabled",
         )
         self.output_box.grid(row=1, column=0, sticky="nsew")
@@ -326,8 +330,8 @@ class SarcasticJoysApp(ctk.CTk):
         self.status_var = ctk.StringVar(value="  Ready")
         self.status_bar = ctk.CTkLabel(
             self, textvariable=self.status_var,
-            font=ctk.CTkFont(size=11), text_color=WARM_GRAY,
-            fg_color=CREAM_DARK, anchor="w", corner_radius=0, height=28,
+            font=caption_font(ctk, THEME), text_color=COLORS["text_muted"],
+            fg_color=COLORS["surface_alt"], anchor="w", corner_radius=0, height=28,
         )
         self.status_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
 
