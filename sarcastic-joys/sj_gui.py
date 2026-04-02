@@ -201,12 +201,12 @@ class SarcasticJoysApp(ctk.CTk):
         hdr.grid_propagate(False)
         ctk.CTkLabel(
             hdr, text="SARCASTIC JOYS",
-            font=self.fonts["font_display"],
+            font=self.fonts.font_display,
             text_color=CREAM, fg_color="transparent",
         ).place(relx=0.04, rely=0.5, anchor="w")
         ctk.CTkLabel(
             hdr, text="Content Repurposing",
-            font=self.fonts["font_body"],
+            font=self.fonts.font_body,
             text_color=WARM_GRAY, fg_color="transparent",
         ).place(relx=0.96, rely=0.5, anchor="e")
 
@@ -216,7 +216,7 @@ class SarcasticJoysApp(ctk.CTk):
         bar.grid_propagate(False)
         bar.grid_columnconfigure(4, weight=1)
 
-        ctk.CTkLabel(bar, text="Backend", font=self.fonts["font_small"],
+        ctk.CTkLabel(bar, text="Backend", font=self.fonts.font_small,
                      text_color=WARM_GRAY, fg_color="transparent"
                      ).grid(row=0, column=0, padx=(16, 4), pady=14)
 
@@ -228,11 +228,11 @@ class SarcasticJoysApp(ctk.CTk):
             width=180, height=30,
             fg_color=WHITE, button_color=CHARCOAL_MID,
             button_hover_color=CHARCOAL, text_color=CHARCOAL,
-            font=self.fonts["font_body"],
+            font=self.fonts.font_body,
         )
         self.backend_menu.grid(row=0, column=1, padx=(0, 16), pady=10)
 
-        ctk.CTkLabel(bar, text="Model", font=self.fonts["font_small"],
+        ctk.CTkLabel(bar, text="Model", font=self.fonts.font_small,
                      text_color=WARM_GRAY, fg_color="transparent"
                      ).grid(row=0, column=2, padx=(0, 4), pady=14)
 
@@ -240,11 +240,11 @@ class SarcasticJoysApp(ctk.CTk):
         self.model_entry = ctk.CTkEntry(
             bar, textvariable=self.model_var, width=200, height=30,
             fg_color=WHITE, border_color=BORDER, text_color=CHARCOAL,
-            font=self.fonts["font_body"],
+            font=self.fonts.font_body,
         )
         self.model_entry.grid(row=0, column=3, padx=(0, 16), pady=10)
 
-        ctk.CTkLabel(bar, text="API Key", font=self.fonts["font_small"],
+        ctk.CTkLabel(bar, text="API Key", font=self.fonts.font_small,
                      text_color=WARM_GRAY, fg_color="transparent"
                      ).grid(row=0, column=5, padx=(0, 4), pady=14)
 
@@ -252,14 +252,14 @@ class SarcasticJoysApp(ctk.CTk):
         self.key_entry = ctk.CTkEntry(
             bar, textvariable=self.key_var, width=220, height=30, show="•",
             fg_color=WHITE, border_color=BORDER, text_color=CHARCOAL,
-            font=self.fonts["font_body"], placeholder_text="paste key here",
+            font=self.fonts.font_body, placeholder_text="paste key here",
         )
         self.key_entry.grid(row=0, column=6, padx=(0, 8), pady=10)
 
         self.save_key_btn = ctk.CTkButton(
             bar, text="Save", width=56, height=30,
             fg_color=CHARCOAL_MID, hover_color=CHARCOAL,
-            text_color=CREAM, font=self.fonts["font_small"],
+            text_color=CREAM, font=self.fonts.font_small,
             command=self._save_key,
         )
         self.save_key_btn.grid(row=0, column=7, padx=(0, 16), pady=10)
@@ -272,12 +272,12 @@ class SarcasticJoysApp(ctk.CTk):
 
         ctk.CTkLabel(
             left, text="Essay",
-            font=self.fonts["font_section"],
+            font=self.fonts.font_section,
             text_color=CHARCOAL, fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w", pady=(0, 6))
 
         self.input_box = ctk.CTkTextbox(
-            left, font=self.fonts["font_body"],
+            left, font=self.fonts.font_body,
             fg_color=WHITE, border_color=BORDER, border_width=1,
             text_color=CHARCOAL, wrap="word",
             scrollbar_button_color=BORDER,
@@ -288,7 +288,7 @@ class SarcasticJoysApp(ctk.CTk):
         self.run_btn = ctk.CTkButton(
             left, text="Repurpose →", height=40,
             fg_color=RUST, hover_color=RUST_HOVER, text_color=WHITE,
-            font=self.fonts["font_title"],
+            font=self.fonts.font_title,
             command=self._on_run, corner_radius=4,
         )
         self.run_btn.grid(row=2, column=0, sticky="ew", pady=(12, 0))
@@ -305,7 +305,7 @@ class SarcasticJoysApp(ctk.CTk):
 
         ctk.CTkLabel(
             out_hdr, text="Output",
-            font=self.fonts["font_section"],
+            font=self.fonts.font_section,
             text_color=CHARCOAL, fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w")
 
@@ -313,7 +313,7 @@ class SarcasticJoysApp(ctk.CTk):
             out_hdr, text="Copy all", width=80, height=28,
             fg_color=CREAM_DARK, hover_color=BORDER,
             text_color=CHARCOAL_MID, border_color=BORDER, border_width=1,
-            font=self.fonts["font_small"], command=self._copy_output,
+            font=self.fonts.font_small, command=self._copy_output,
         )
         self.copy_btn.grid(row=0, column=1, padx=(8, 0))
 
@@ -321,12 +321,12 @@ class SarcasticJoysApp(ctk.CTk):
             out_hdr, text="Save .md", width=80, height=28,
             fg_color=CREAM_DARK, hover_color=BORDER,
             text_color=CHARCOAL_MID, border_color=BORDER, border_width=1,
-            font=self.fonts["font_small"], command=self._save_output,
+            font=self.fonts.font_small, command=self._save_output,
         )
         self.save_btn.grid(row=0, column=2, padx=(6, 0))
 
         self.output_box = ctk.CTkTextbox(
-            right, font=self.fonts["font_body"],
+            right, font=self.fonts.font_body,
             fg_color=WHITE, border_color=BORDER, border_width=1,
             text_color=CHARCOAL, wrap="word",
             scrollbar_button_color=BORDER,
@@ -339,7 +339,7 @@ class SarcasticJoysApp(ctk.CTk):
         self.status_var = ctk.StringVar(value="  Ready")
         self.status_bar = ctk.CTkLabel(
             self, textvariable=self.status_var,
-            font=self.fonts["font_small"], text_color=WARM_GRAY,
+            font=self.fonts.font_small, text_color=WARM_GRAY,
             fg_color=CREAM_DARK, anchor="w", corner_radius=0, height=28,
         )
         self.status_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
