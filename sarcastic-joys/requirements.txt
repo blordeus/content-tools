@@ -1,0 +1,6 @@
+# Core
+anthropic>=0.25.0   # for --backend anthropic
+openai>=1.0.0       # for --backend groq, ollama, openai (they all speak the OpenAI API)
+
+# Terminal UI (optional but recommended)
+rich>=13.0.0
