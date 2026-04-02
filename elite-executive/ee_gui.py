@@ -14,6 +14,12 @@ from html.parser import HTMLParser
 from pathlib import Path
 from datetime import datetime
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from shared_theme import create_semantic_typography
+
 try:
     import customtkinter as ctk
 except ImportError:
@@ -239,6 +245,13 @@ class EliteExecApp(ctk.CTk):
         self.geometry("1100x780")
         self.minsize(860, 620)
         self.configure(fg_color=SLATE)
+        self.fonts = create_semantic_typography(
+            ctk,
+            display_family="Helvetica",
+            title_family="Helvetica",
+            body_family="Helvetica",
+            mono_family="Courier",
+        )
         self._build_ui()
         self._load_saved_key()
 
@@ -258,12 +271,12 @@ class EliteExecApp(ctk.CTk):
         title_frame.place(relx=0.04, rely=0.5, anchor="w")
         ctk.CTkLabel(
             title_frame, text="ELITE EXECUTIVE",
-            font=ctk.CTkFont(family="Helvetica", size=16, weight="bold"),
+            font=self.fonts["font_display"],
             text_color=GOLD, fg_color="transparent",
         ).pack(side="left")
         ctk.CTkLabel(
             title_frame, text="  ·  Substack Notes",
-            font=ctk.CTkFont(family="Helvetica", size=12),
+            font=self.fonts["font_body"],
             text_color=TEXT_DIM, fg_color="transparent",
         ).pack(side="left")
 
@@ -274,7 +287,7 @@ class EliteExecApp(ctk.CTk):
         bar.grid_columnconfigure(4, weight=1)
 
         def lbl(parent, text):
-            return ctk.CTkLabel(parent, text=text, font=ctk.CTkFont(size=11),
+            return ctk.CTkLabel(parent, text=text, font=self.fonts["font_small"],
                                 text_color=TEXT_DIM, fg_color="transparent")
 
         lbl(bar, "Backend").grid(row=0, column=0, padx=(16, 4), pady=12)
@@ -284,7 +297,7 @@ class EliteExecApp(ctk.CTk):
             command=self._on_backend_change,
             width=190, height=30,
             fg_color=SLATE_MID, button_color=GOLD, button_hover_color=GOLD_HOVER,
-            text_color=TEXT_MAIN, font=ctk.CTkFont(size=12),
+            text_color=TEXT_MAIN, font=self.fonts["font_body"],
             dropdown_fg_color=SLATE_MID, dropdown_text_color=TEXT_MAIN,
             dropdown_hover_color=SLATE_LIGHT,
         ).grid(row=0, column=1, padx=(0, 16), pady=10)
@@ -294,7 +307,7 @@ class EliteExecApp(ctk.CTk):
         ctk.CTkEntry(
             bar, textvariable=self.model_var, width=200, height=30,
             fg_color=SLATE_MID, border_color=BORDER, text_color=TEXT_MAIN,
-            font=ctk.CTkFont(size=12),
+            font=self.fonts["font_body"],
         ).grid(row=0, column=3, padx=(0, 16), pady=10)
 
         lbl(bar, "API Key").grid(row=0, column=5, padx=(0, 4))
@@ -302,14 +315,14 @@ class EliteExecApp(ctk.CTk):
         ctk.CTkEntry(
             bar, textvariable=self.key_var, width=230, height=30, show="•",
             fg_color=SLATE_MID, border_color=BORDER, text_color=TEXT_MAIN,
-            font=ctk.CTkFont(size=12), placeholder_text="paste key here",
+            font=self.fonts["font_body"], placeholder_text="paste key here",
             placeholder_text_color=MUTED,
         ).grid(row=0, column=6, padx=(0, 8), pady=10)
 
         ctk.CTkButton(
             bar, text="Save", width=56, height=30,
             fg_color=SLATE_MID, hover_color=BORDER, border_color=BORDER, border_width=1,
-            text_color=TEXT_DIM, font=ctk.CTkFont(size=11),
+            text_color=TEXT_DIM, font=self.fonts["font_small"],
             command=self._save_key,
         ).grid(row=0, column=7, padx=(0, 16), pady=10)
 
@@ -325,17 +338,17 @@ class EliteExecApp(ctk.CTk):
 
         ctk.CTkLabel(
             top_left, text="Newsletter URLs",
-            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
+            font=self.fonts["font_section"],
             text_color=OFF_WHITE, fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w")
         ctk.CTkLabel(
             top_left, text="one per line",
-            font=ctk.CTkFont(size=11), text_color=TEXT_DIM,
+            font=self.fonts["font_small"], text_color=TEXT_DIM,
             fg_color="transparent",
         ).grid(row=0, column=1, sticky="e")
 
         self.url_box = ctk.CTkTextbox(
-            left, font=ctk.CTkFont(family="Courier", size=12),
+            left, font=self.fonts["font_mono"],
             fg_color=SLATE_MID, border_color=BORDER, border_width=1,
             text_color=TEXT_MAIN, wrap="none",
             scrollbar_button_color=BORDER, scrollbar_button_hover_color=SLATE_LIGHT,
@@ -345,7 +358,7 @@ class EliteExecApp(ctk.CTk):
         self.run_btn = ctk.CTkButton(
             left, text="Generate Notes →", height=42,
             fg_color=GOLD, hover_color=GOLD_HOVER, text_color=SLATE,
-            font=ctk.CTkFont(family="Helvetica", size=14, weight="bold"),
+            font=self.fonts["font_title"],
             command=self._on_run, corner_radius=3,
         )
         self.run_btn.grid(row=2, column=0, sticky="ew", pady=(12, 0))
@@ -362,7 +375,7 @@ class EliteExecApp(ctk.CTk):
 
         ctk.CTkLabel(
             top_right, text="Generated Notes",
-            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
+            font=self.fonts["font_section"],
             text_color=OFF_WHITE, fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w")
 
@@ -374,12 +387,12 @@ class EliteExecApp(ctk.CTk):
                 top_right, text=label, width=76, height=28,
                 fg_color=SLATE_LIGHT, hover_color=BORDER,
                 border_color=BORDER, border_width=1,
-                text_color=TEXT_DIM, font=ctk.CTkFont(size=11),
+                text_color=TEXT_DIM, font=self.fonts["font_small"],
                 command=cmd,
             ).grid(row=0, column=col, padx=(6, 0))
 
         self.output_box = ctk.CTkTextbox(
-            right, font=ctk.CTkFont(family="Helvetica", size=13),
+            right, font=self.fonts["font_body"],
             fg_color=SLATE_MID, border_color=BORDER, border_width=1,
             text_color=TEXT_MAIN, wrap="word",
             scrollbar_button_color=BORDER, scrollbar_button_hover_color=SLATE_LIGHT,
@@ -391,7 +404,7 @@ class EliteExecApp(ctk.CTk):
         self.status_var = ctk.StringVar(value="Ready")
         ctk.CTkLabel(
             self, textvariable=self.status_var,
-            font=ctk.CTkFont(size=11), text_color=TEXT_DIM,
+            font=self.fonts["font_small"], text_color=TEXT_DIM,
             fg_color=SLATE_MID, anchor="w", corner_radius=0, height=28,
         ).grid(row=3, column=0, columnspan=2, sticky="ew")
 
