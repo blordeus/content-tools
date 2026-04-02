@@ -223,16 +223,7 @@ def save_output(text: str) -> Path:
 
 # ── Palette ───────────────────────────────────────────────────────────────────
 
-SLATE       = "#1A1F2E"
-SLATE_MID   = "#252B3B"
-SLATE_LIGHT = "#2E3547"
-GOLD        = "#C9A84C"
-GOLD_HOVER  = "#B8962E"
-OFF_WHITE   = "#E8E4DC"
-MUTED       = "#6B7280"
-BORDER      = "#3A4055"
-TEXT_MAIN   = "#E2DDD4"
-TEXT_DIM    = "#8892A4"
+THEME = THEMES["elite_executive"]
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
@@ -263,7 +254,7 @@ class EliteExecApp(ctk.CTk):
         self.grid_rowconfigure(2, weight=1)
 
         # Header
-        hdr = ctk.CTkFrame(self, fg_color=SLATE_MID, corner_radius=0, height=64)
+        hdr = ctk.CTkFrame(self, fg_color=THEME["surface_header"], corner_radius=0, height=64)
         hdr.grid(row=0, column=0, columnspan=2, sticky="ew")
         hdr.grid_propagate(False)
 
@@ -271,17 +262,17 @@ class EliteExecApp(ctk.CTk):
         title_frame.place(relx=0.04, rely=0.5, anchor="w")
         ctk.CTkLabel(
             title_frame, text="ELITE EXECUTIVE",
-            font=self.fonts.font_display,
-            text_color=GOLD, fg_color="transparent",
+            font=ctk.CTkFont(family="Helvetica", size=16, weight="bold"),
+            text_color=THEME["text_accent"], fg_color="transparent",
         ).pack(side="left")
         ctk.CTkLabel(
             title_frame, text="  ·  Substack Notes",
-            font=self.fonts.font_body,
-            text_color=TEXT_DIM, fg_color="transparent",
+            font=ctk.CTkFont(family="Helvetica", size=12),
+            text_color=THEME["text_muted_on_dark"], fg_color="transparent",
         ).pack(side="left")
 
         # Settings bar
-        bar = ctk.CTkFrame(self, fg_color=SLATE_LIGHT, corner_radius=0, height=52)
+        bar = ctk.CTkFrame(self, fg_color=THEME["surface_subtle"], corner_radius=0, height=52)
         bar.grid(row=1, column=0, columnspan=2, sticky="ew")
         bar.grid_propagate(False)
         bar.grid_columnconfigure(4, weight=1)
@@ -327,7 +318,7 @@ class EliteExecApp(ctk.CTk):
         ).grid(row=0, column=7, padx=(0, 16), pady=10)
 
         # Left — URL input
-        left = ctk.CTkFrame(self, fg_color=SLATE, corner_radius=0)
+        left = ctk.CTkFrame(self, fg_color=THEME["surface_app"], corner_radius=0)
         left.grid(row=2, column=0, sticky="nsew", padx=(16, 8), pady=16)
         left.grid_rowconfigure(1, weight=1)
         left.grid_columnconfigure(0, weight=1)
@@ -344,6 +335,12 @@ class EliteExecApp(ctk.CTk):
         ctk.CTkLabel(
             top_left, text="one per line",
             font=self.fonts.font_small, text_color=TEXT_DIM,
+            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
+            text_color=THEME["text_primary"], fg_color="transparent", anchor="w",
+        ).grid(row=0, column=0, sticky="w")
+        ctk.CTkLabel(
+            top_left, text="one per line",
+            font=ctk.CTkFont(size=11), text_color=THEME["text_muted_on_dark"],
             fg_color="transparent",
         ).grid(row=0, column=1, sticky="e")
 
@@ -352,6 +349,10 @@ class EliteExecApp(ctk.CTk):
             fg_color=SLATE_MID, border_color=BORDER, border_width=1,
             text_color=TEXT_MAIN, wrap="none",
             scrollbar_button_color=BORDER, scrollbar_button_hover_color=SLATE_LIGHT,
+            left, font=ctk.CTkFont(family="Courier", size=12),
+            fg_color=THEME["surface_header"], border_color=THEME["border"], border_width=1,
+            text_color=THEME["text_primary"], wrap="none",
+            scrollbar_button_color=THEME["border"], scrollbar_button_hover_color=THEME["surface_subtle"],
         )
         self.url_box.grid(row=1, column=0, sticky="nsew")
 
@@ -359,12 +360,14 @@ class EliteExecApp(ctk.CTk):
             left, text="Generate Notes →", height=42,
             fg_color=GOLD, hover_color=GOLD_HOVER, text_color=SLATE,
             font=self.fonts.font_title,
+            fg_color=THEME["action_bg"], hover_color=THEME["action_bg_hover"], text_color=THEME["action_text"],
+            font=ctk.CTkFont(family="Helvetica", size=14, weight="bold"),
             command=self._on_run, corner_radius=3,
         )
         self.run_btn.grid(row=2, column=0, sticky="ew", pady=(12, 0))
 
         # Right — output
-        right = ctk.CTkFrame(self, fg_color=SLATE, corner_radius=0)
+        right = ctk.CTkFrame(self, fg_color=THEME["surface_app"], corner_radius=0)
         right.grid(row=2, column=1, sticky="nsew", padx=(8, 16), pady=16)
         right.grid_rowconfigure(1, weight=1)
         right.grid_columnconfigure(0, weight=1)
@@ -377,6 +380,8 @@ class EliteExecApp(ctk.CTk):
             top_right, text="Generated Notes",
             font=self.fonts.font_section,
             text_color=OFF_WHITE, fg_color="transparent", anchor="w",
+            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
+            text_color=THEME["text_primary"], fg_color="transparent", anchor="w",
         ).grid(row=0, column=0, sticky="w")
 
         for col, (label, cmd) in enumerate([
@@ -388,14 +393,17 @@ class EliteExecApp(ctk.CTk):
                 fg_color=SLATE_LIGHT, hover_color=BORDER,
                 border_color=BORDER, border_width=1,
                 text_color=TEXT_DIM, font=self.fonts.font_small,
+                fg_color=THEME["surface_subtle"], hover_color=THEME["control_bg_hover"],
+                border_color=THEME["border"], border_width=1,
+                text_color=THEME["text_muted_on_dark"], font=ctk.CTkFont(size=11),
                 command=cmd,
             ).grid(row=0, column=col, padx=(6, 0))
 
         self.output_box = ctk.CTkTextbox(
-            right, font=self.fonts.font_body,
-            fg_color=SLATE_MID, border_color=BORDER, border_width=1,
-            text_color=TEXT_MAIN, wrap="word",
-            scrollbar_button_color=BORDER, scrollbar_button_hover_color=SLATE_LIGHT,
+            right, font=ctk.CTkFont(family="Helvetica", size=13),
+            fg_color=THEME["surface_header"], border_color=THEME["border"], border_width=1,
+            text_color=THEME["text_primary"], wrap="word",
+            scrollbar_button_color=THEME["border"], scrollbar_button_hover_color=THEME["surface_subtle"],
             state="disabled",
         )
         self.output_box.grid(row=1, column=0, sticky="nsew")
@@ -406,6 +414,8 @@ class EliteExecApp(ctk.CTk):
             self, textvariable=self.status_var,
             font=self.fonts.font_small, text_color=TEXT_DIM,
             fg_color=SLATE_MID, anchor="w", corner_radius=0, height=28,
+            font=ctk.CTkFont(size=11), text_color=THEME["text_muted_on_dark"],
+            fg_color=THEME["surface_header"], anchor="w", corner_radius=0, height=28,
         ).grid(row=3, column=0, columnspan=2, sticky="ew")
 
     # ── Helpers ───────────────────────────────────────────────────────────────
