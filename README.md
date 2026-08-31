@@ -30,6 +30,7 @@ Paste 1–3 newsletter URLs, get two Substack notes per link:
 - `ee_gui.py` — desktop GUI
 - `elite_exec.py` — CLI version
 
+**Used in production** during my time as the Email Marketing Specialist at Elite Executive Coaching, generating Substack notes from real newsletter issues as part of the regular content workflow.
 ---
 
 ## Setup
