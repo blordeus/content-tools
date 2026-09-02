@@ -31,6 +31,8 @@ Paste 1–3 newsletter URLs, get two Substack notes per link:
 - `elite_exec.py` — CLI version
 
 **Used in production** during my time as the Email Marketing Specialist at Elite Executive Coaching, generating Substack notes from real newsletter issues as part of the regular content workflow.
+
+**Known limitations:** API keys are currently stored in plaintext locally (fine for personal use; would move to OS-level credential storage via `keyring` before handing this to another user). No retry logic on API failures for large unattended batch runs — acceptable for the current scale of use, worth adding if this runs 20+ URLs unattended.
 ---
 
 ## Setup
